@@ -1,2 +1,2 @@
 # connet-group-sk
-Company website
+ConNet Group SK website
