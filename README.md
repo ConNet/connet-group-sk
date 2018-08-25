@@ -1,2 +1,2 @@
 # connet-group-sk
-Company web site
+Company website

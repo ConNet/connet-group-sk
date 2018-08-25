@@ -1,0 +1,164 @@
+# ----------------------------------------------------------------------
+# | Custom error messages/pages                                        |
+# ----------------------------------------------------------------------
+
+ErrorDocument 404 /404.html
+
+# ----------------------------------------------------------------------
+# | Character encodings                                                |
+# ----------------------------------------------------------------------
+
+AddDefaultCharset utf-8
+
+<IfModule mod_mime.c>
+  AddCharset utf-8 .atom .bbaw .css .geojson .js .json .jsonld \
+                   .manifest .rdf .rss .topojson .vtt .webapp \
+                   .webmanifest .xloc .xml
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Forcing `https://` and the `www.` at the beginning of URLs         |
+# ----------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+
+  RewriteEngine on
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteCond %{HTTP_HOST} !^www\. [NC]
+  RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Clickjacking                                                       |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  <FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
+    Header always unset X-Frame-Options
+  </FilesMatch>
+
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Content Security Policy (CSP)                                      |
+# ----------------------------------------------------------------------
+
+#<IfModule mod_headers.c>
+
+#  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://www.google-analytics.com https://code.jquery.com https://cdnjs.cloudflare.com https://maxcdn.bootstrapcdn.com; style-src 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com; img-src 'self' data: https://www.google-analytics.com https://maps.googleapis.com; report-uri https://a34838f3192a6d321f99638e38131735.report-uri.io/r/default/csp/enforce;"
+
+#  <FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
+#    Header always unset Content-Security-Policy
+#  </FilesMatch>
+
+#</IfModule>
+
+# ----------------------------------------------------------------------
+# | HTTP Strict Transport Security (HSTS)                              |
+# ----------------------------------------------------------------------
+
+#<IfModule mod_headers.c>
+
+#  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+# Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
+
+#</IfModule>
+
+# ----------------------------------------------------------------------
+# | Reducing MIME type security risks                                  |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+
+  Header always set X-Content-Type-Options "nosniff"
+
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Reflected Cross-Site Scripting (XSS) attacks                       |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+
+  Header always set X-Xss-Protection "1; mode=block"
+
+  <FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
+    Header always unset X-XSS-Protection
+  </FilesMatch>
+
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | HTTP Public Key Pinning                                            |
+# ----------------------------------------------------------------------
+
+# PKP hash for Let's Encrypt Authority X3
+# pin-sha256="YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg="
+
+# PKP hash for Let's Encrypt Authority X4
+# pin-sha256="sRHdihwgkaib1P1gxX8HFszlD+7/gTfNvuAybgLPNis="
+
+# PKP hash for DST Root CA X3
+# pin-sha256="Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="
+
+# PKP hash for ISRG Root X1
+# pin-sha256="C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M="
+
+# PKP hash for GeoTrust Primary Certification Authority – G3
+# pin-sha256="q5hJUnat8eyv8o81xTBIeB5cFxjaucjmelBPT2pRMo8="
+
+#<IfModule mod_headers.c>
+
+#  Header always set Public-Key-Pins 'pin-sha256="YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg="; pin-sha256="sRHdihwgkaib1P1gxX8HFszlD+7/gTfNvuAybgLPNis="; pin-sha256="Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="; pin-sha256="C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M="; pin-sha256="q5hJUnat8eyv8o81xTBIeB5cFxjaucjmelBPT2pRMo8="; max-age=2592000; includeSubdomains; report-uri="https://a34838f3192a6d321f99638e38131735.report-uri.io/r/default/hpkp/enforce"' env=HTTPS
+
+#  <FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
+#    Header always unset Public-Key-Pins
+#  </FilesMatch>
+
+#</IfModule>
+
+# ----------------------------------------------------------------------
+# | Referrer Policy                                                    |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+
+  Header always set Referrer-Policy "no-referrer-when-downgrade"
+
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Expect-CT (Certificate Transparency)                               |
+# ----------------------------------------------------------------------
+
+#<IfModule mod_headers.c>
+
+#  Header always set Expect-CT 'max-age=30; report-uri="https://a34838f3192a6d321f99638e38131735.report-uri.io/r/default/ct/reportOnly"' env=HTTPS
+# Header always set Expect-CT 'enforce; max-age=30; report-uri="https://a34838f3192a6d321f99638e38131735.report-uri.io/r/default/ct/enforce"' env=HTTPS
+
+#</IfModule>
+
+# ----------------------------------------------------------------------
+# | Expect-Staple                                                      |
+# ----------------------------------------------------------------------
+
+#<IfModule mod_headers.c>
+
+#  Header always set Expect-Staple 'max-age=0; report-uri="https://a34838f3192a6d321f99638e38131735.report-uri.io/r/default/staple/reportOnly"; includeSubDomains' env=HTTPS
+
+#</IfModule>
+
+# ----------------------------------------------------------------------
+# | Leverage browser caching                                           |
+# ----------------------------------------------------------------------
+
+#<IfModule mod_expires.c>
+#  ExpiresActive On
+#  ExpiresDefault "access plus 1 week"
+#</IfModule>
